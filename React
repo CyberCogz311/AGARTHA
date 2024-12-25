@@ -1,0 +1,80 @@
+Next, we will build the frontend using React. For this example, let's focus on creating a basic voting interface where users can vote on proposals.
+
+a) Initialize React App
+
+npx create-react-app self-governance-frontend
+cd self-governance-frontend
+npm install web3
+
+b) Create a Voting Component
+Voting.js (Frontend Voting UI)
+
+import React, { useState, useEffect } from 'react';
+import Web3 from 'web3';
+
+const Voting = () => {
+  const [proposals, setProposals] = useState([]);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const [account, setAccount] = useState(null);
+  const [web3, setWeb3] = useState(null);
+
+  // Fetch proposals (use API backend later to fetch live data)
+  useEffect(() => {
+    setProposals([
+      { id: 1, title: 'Universal Healthcare', description: 'Implement a universal healthcare system.' },
+      { id: 2, title: 'Clean Energy Act', description: 'Pass a national clean energy bill.' }
+    ]);
+  }, []);
+
+  // Connect to Ethereum account
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      const web3Instance = new Web3(window.ethereum);
+      setWeb3(web3Instance);
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      setAccount(accounts[0]);
+    } else {
+      alert('Please install MetaMask!');
+    }
+  };
+
+  // Submit a vote
+  const submitVote = async () => {
+    if (web3 && account && selectedProposal) {
+      // Example of sending a transaction to a smart contract
+      console.log(`Voting for proposal ID ${selectedProposal.id}`);
+      // Call your smart contract vote function here
+    }
+  };
+
+  return (
+    <div>
+      <h1>Vote on Proposals</h1>
+      <button onClick={connectWallet}>Connect Wallet</button>
+      <h2>Selected Account: {account}</h2>
+      
+      <ul>
+        {proposals.map((proposal) => (
+          <li key={proposal.id}>
+            <button onClick={() => setSelectedProposal(proposal)}>
+              {proposal.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {selectedProposal && (
+        <div>
+          <h3>Selected Proposal: {selectedProposal.title}</h3>
+          <p>{selectedProposal.description}</p>
+          <button onClick={submitVote}>Submit Vote</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Voting;
+
+Explanation: This frontend component lets users connect their MetaMask wallet (or any Ethereum wallet), select a proposal, and submit their vote. You’d connect the wallet to the blockchain for voting using Web3.js.
+
